@@ -11,54 +11,33 @@
 
             <div class="overflow-x-auto bg-white shadow-md rounded-2xl">
                 <table class="min-w-full table-auto border-collapse">
-                    <thead class="bg-gray-100 text-gray-700 text-sm uppercase">
+                    <thead class="bg-gray-100 text-gray-700 text-xs uppercase">
                         <tr>
-                            <th class="px-6 py-3 text-left">Nom</th>
-                            <th class="px-6 py-3 text-left">Durée</th>
-                            <th class="px-6 py-3 text-left">Budget</th>
-                            <th class="px-6 py-3 text-left">Nombre de personnes</th>
-                            <th class="px-6 py-3 text-left">Entreprise</th>
-                            <th class="px-6 py-3 text-left">Tâches associées</th>
-                            <th class="px-6 py-3 text-left">État</th>
-                            <th class="px-6 py-3 text-left">Actions</th>
+                            <th class="px-4 py-3 text-left">Nom</th>
+                            <th class="px-4 py-3 text-left">Durée</th>
+                            <th class="px-4 py-3 text-left">Budget</th>
+                            <th class="px-4 py-3 text-left">Entreprise</th>
+                            <th class="px-4 py-3 text-left">État</th>
+                            <th class="px-4 py-3 text-left">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-800 text-sm divide-y divide-gray-200">
                         @forelse ($projets as $projet)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">{{ $projet->nom }}</td>
-                                <td class="px-6 py-4">{{ $projet->duree }} jours</td>
-                                <td class="px-6 py-4">{{ $projet->budget }}</td>
-                                <td class="px-6 py-4">{{ $projet->nombre_personnes }}</td>
-                                <td class="px-6 py-4">{{ $projet->entreprise->nom }}</td>
-                                <td class="px-6 py-4">
-                                    @if ($projet->projetPossible && $projet->projetPossible->maquette_taches)
-                                        @php
-                                            $taches = json_decode($projet->projetPossible->maquette_taches, true);
-                                        @endphp
-                                        @if (!empty($taches) && is_array($taches))
-                                            <ul class="list-disc pl-4">
-                                                @foreach ($taches as $tache)
-                                                    <li>{{ $tache }}</li>
-                                                @endforeach
-                                            </ul>
-                                        @else
-                                            <span class="text-gray-500">Aucune tâche définie</span>
-                                        @endif
-                                    @else
-                                        <span class="text-gray-500">Non basé sur un modèle</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4">
+                                <td class="px-4 py-3">{{ $projet->nom }}</td>
+                                <td class="px-4 py-3">{{ $projet->duree }} jours</td>
+                                <td class="px-4 py-3">{{ $projet->budget }}</td>
+                                <td class="px-4 py-3">{{ $projet->entreprise->nom }}</td>
+                                <td class="px-4 py-3">
                                     <span class="{{ $projet->is_active ? 'text-green-500' : 'text-red-500' }}">
                                         {{ $projet->is_active ? __('Actif') : __('Inactif') }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <a href="{{ route('projets.show', $projet->id) }}" class="inline-block bg-indigo-600 text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition mr-2">
+                                <td class="px-4 py-3 flex space-x-2">
+                                    <a href="{{ route('projets.show', $projet->id) }}" class="bg-indigo-600 text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
                                         Tableau de bord
                                     </a>
-                                    <a href="{{ route('projets.edit', $projet->id) }}" class="inline-block bg-blue-500 text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-blue-700 transition mr-2">
+                                    <a href="{{ route('projets.edit', $projet->id) }}" class="bg-blue-500 text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-blue-700 transition">
                                         Modifier
                                     </a>
                                     @if (!$projet->is_active)
@@ -87,7 +66,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="px-6 py-4 text-center text-gray-500">Aucun projet trouvé.</td>
+                                <td colspan="6" class="px-4 py-4 text-center text-gray-500">Aucun projet trouvé.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -96,6 +75,13 @@
 
             <div class="mt-6">
                 {{ $projets->links('pagination::tailwind') }}
+            </div>
+
+            {{-- Bouton joli pour revenir en arrière --}}
+            <div class="mt-6 text-center">
+                <a href="{{ route('dashboard') }}" class="inline-block bg-indigo-600 text-white text-lg font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-indigo-700 hover:shadow-xl transition-all duration-300">
+                    ← Retour à l'accueil
+                </a>
             </div>
         </div>
     </x-slot>

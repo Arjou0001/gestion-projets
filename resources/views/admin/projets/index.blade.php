@@ -51,7 +51,7 @@
                                             @if ($projet->is_active)
                                                 <a href="{{ route('admin.projets.deactivate', $projet->id) }}" class="text-red-600 hover:text-red-900 mr-2" onclick="return confirm('{{ __('Êtes-vous sûr de vouloir désactiver ce projet ?') }}')">{{ __('Désactiver') }}</a>
                                             @else
-                                                <a href="{{ route('admin.projets.activate', $projet->id) }}" class="text-green-600 hover:text-green-900">{{ __('Activer') }}</a>
+                                                <a href="{{ route('admin.projets.activate', $projet->id) }}" class="text-green-600 hover:text-green-900 mr-2">{{ __('Activer') }}</a>
                                             @endif
                                         </td>
                                     </tr>

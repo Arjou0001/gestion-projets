@@ -152,7 +152,7 @@ class ProjetController extends Controller
             case 'Informatique':
                 return [
                     'duree_estimee' => $projet->duree . ' jours',
-                    'budget_total' => $projet->budget . ' €',
+                    'budget_total' => $projet->budget . ' FCFA',
                     'personnes_requises' => $projet->nombre_personnes,
                 ];
             case 'BTP':
@@ -163,9 +163,9 @@ class ProjetController extends Controller
                 ];
             case 'Commerce':
                 return [
-                    'objectif_vente' => rand(1000, 10000) . ' €/mois',
+                    'objectif_vente' => rand(1000, 10000) . ' FCFA/mois',
                     'marge_moyenne' => rand(15, 30) . '%',
-                    'investissements_initiaux' => $projet->budget . ' €',
+                    'investissements_initiaux' => $projet->budget . ' FCFA',
                 ];
             case 'Agriculture':
                 return [

@@ -7,6 +7,7 @@ use App\Models\Entreprise;
 use App\Models\Projet;
 use App\Models\ProjetPossible;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
 class AdminProjetController extends Controller
 {
@@ -20,12 +21,12 @@ class AdminProjetController extends Controller
     }
 
     /**
-     * Affiche le formulaire de création d'un nouveau projet (pour l'admin).
+     * Affiche le formulaire de création d'un nouveau projet.
      */
     public function create()
     {
         $entreprises = Entreprise::all();
-        $projetsPossibles = ProjetPossible::all();
+        $projetsPossibles = []; // Aucun projet possible tant qu’on n’a pas choisi l’entreprise
         return view('admin.projets.create', compact('entreprises', 'projetsPossibles'));
     }
 
@@ -34,7 +35,7 @@ class AdminProjetController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nom' => 'required|string|max:255',
             'duree' => 'required|integer|min:1',
             'budget' => 'required|numeric|min:1',
@@ -44,7 +45,10 @@ class AdminProjetController extends Controller
             'is_active' => 'nullable|boolean',
         ]);
 
-        Projet::create($request->all());
+        // Si la case est cochée, active le projet
+        $validated['is_active'] = $request->has('is_active');
+
+        Projet::create($validated);
 
         return redirect()->route('admin.projets.index')->with('success', 'Le projet a été créé avec succès.');
     }
@@ -60,19 +64,25 @@ class AdminProjetController extends Controller
     /**
      * Affiche le formulaire d'édition d'un projet.
      */
-    public function edit(Projet $projet)
-    {
-        $entreprises = Entreprise::all();
-        $projetsPossibles = ProjetPossible::all();
-        return view('admin.projets.edit', compact('projet', 'entreprises', 'projetsPossibles'));
-    }
+   
+
+public function edit(Projet $projet)
+{
+    $entreprises = Entreprise::all();
+
+    // On récupère les projets possibles selon la nature de l'entreprise liée au projet
+    $projetsPossibles = ProjetPossible::where('nature', $projet->entreprise->nature)->get();
+
+    return view('admin.projets.edit', compact('projet', 'entreprises', 'projetsPossibles'));
+}
+
 
     /**
-     * Met à jour un projet.
+     * Met à jour un projet existant.
      */
     public function update(Request $request, Projet $projet)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nom' => 'required|string|max:255',
             'duree' => 'required|integer|min:1',
             'budget' => 'required|numeric|min:1',
@@ -82,26 +92,30 @@ class AdminProjetController extends Controller
             'is_active' => 'nullable|boolean',
         ]);
 
-        $projet->update($request->all());
+        $validated['is_active'] = $request->has('is_active');
+
+        $projet->update($validated);
 
         return redirect()->route('admin.projets.index')->with('success', 'Le projet a été mis à jour avec succès.');
     }
 
     /**
-     * Désactive un projet.
+     * Active un projet.
      */
-    public function deactivate(Projet $projet)
+    public function activate(Projet $projet): RedirectResponse
     {
-        $projet->update(['is_active' => false]);
-        return redirect()->route('admin.projets.index')->with('success', 'Le projet "' . $projet->nom . '" a été désactivé.');
+        $projet->update(['is_active' => true]);
+
+        return redirect()->route('admin.projets.index')->with('success', 'Le projet a été activé avec succès.');
     }
 
     /**
-     * Active un projet.
+     * Désactive un projet.
      */
-    public function activate(Projet $projet)
+    public function deactivate(Projet $projet): RedirectResponse
     {
-        $projet->update(['is_active' => true]);
-        return redirect()->route('admin.projets.index')->with('success', 'Le projet "' . $projet->nom . '" a été activé.');
+        $projet->update(['is_active' => false]);
+
+        return redirect()->route('admin.projets.index')->with('success', 'Le projet a été désactivé avec succès.');
     }
 }

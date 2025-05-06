@@ -7,8 +7,10 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
+
+                    {{-- Messages de succès ou d’erreur --}}
                     @if(session('success'))
                         <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
                             {{ session('success') }}
@@ -20,49 +22,60 @@
                         </div>
                     @endif
 
-                    <div class="mb-4">
-                        <a href="{{ route('admin.users.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            Ajouter un Chef d'Entreprise
+                    {{-- Bouton d’ajout --}}
+                    <div class="mb-6">
+                        <a href="{{ route('admin.users.create') }}"
+                           class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow">
+                            + Ajouter un Chef d'Entreprise
                         </a>
                     </div>
 
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th scope="col" class="relative px-6 py-3">
-                                    <span class="sr-only">Actions</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @forelse ($chefsEntreprise as $chef)
+                    {{-- Tableau des chefs d’entreprise --}}
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm text-gray-700">
+                            <thead class="bg-gray-100">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $chef->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $chef->email }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <a href="{{ route('admin.users.edit', $chef->id) }}" class="text-indigo-600 hover:text-indigo-900 mr-2">Modifier</a>
-                                        <form action="{{ route('admin.users.delete', $chef->id) }}" method="POST" class="inline-block">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">Supprimer</button>
-                                        </form>
-                                        <a href="{{ route('admin.entreprises.create', ['chef_id' => $chef->id]) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2">
-                                            Ajouter Entreprise
-                                        </a>
-                                    </td>
+                                    <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Nom</th>
+                                    <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-right font-medium uppercase tracking-wider">Actions</th>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap" colspan="3">Aucun chef d'entreprise trouvé.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse ($chefsEntreprise as $chef)
+                                    <tr>
+                                        <td class="px-6 py-4">{{ $chef->name }}</td>
+                                        <td class="px-6 py-4">{{ $chef->email }}</td>
+                                        <td class="px-6 py-4 text-right space-x-2">
+                                            <a href="{{ route('admin.users.edit', $chef->id) }}"
+                                               class="text-indigo-600 hover:text-indigo-800 font-medium">
+                                                Modifier
+                                            </a>
+                                            <form action="{{ route('admin.users.delete', $chef->id) }}" method="POST" class="inline-block">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="text-red-600 hover:text-red-800 font-medium"
+                                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
+                                                    Supprimer
+                                                </button>
+                                            </form>
+                                            <a href="{{ route('admin.entreprises.create', ['chef_id' => $chef->id]) }}"
+                                               class="bg-blue-500 hover:bg-blue-700 text-white py-1.5 px-3 rounded font-medium shadow">
+                                                + Entreprise
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-4 text-center text-gray-500">Aucun chef d'entreprise trouvé.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
-                    {{-- Si vous utilisez la pagination : --}}
-                    {{-- <div class="mt-4">
+                    {{-- Pagination (facultative) --}}
+                    {{-- <div class="mt-6">
                         {{ $chefsEntreprise->links() }}
                     </div> --}}
                 </div>
